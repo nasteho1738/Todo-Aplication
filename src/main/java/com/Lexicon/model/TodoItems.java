@@ -17,6 +17,13 @@ public class TodoItems {
         this.done = done;
     }
 
+    public TodoItems(int todoId, String title, String description, boolean done) {
+        this.todoId = todoId;
+        this.title = title;
+        this.description = description;
+        this.done = done;
+    }
+
     public int getTodoId() {
         return todoId;
     }
@@ -75,5 +82,7 @@ public class TodoItems {
                 ", deadline='" + deadline + '\'' +
                 ", done=" + done +
                 '}';
+    }
+    public void getTitle(String title) {
     }
 }

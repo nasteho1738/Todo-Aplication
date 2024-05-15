@@ -1,6 +1,6 @@
 package com.Lexicon.Data.DaoImpl;
 
-import com.Lexicon.Data.PeopleDao;
+import com.Lexicon.Data.PersonDao;
 import com.Lexicon.model.Person;
 
 import java.sql.Connection;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
-public class PersonDaoImpl implements PeopleDao {
+public class PersonDaoImpl implements PersonDao {
 
     private Connection connection;
 
