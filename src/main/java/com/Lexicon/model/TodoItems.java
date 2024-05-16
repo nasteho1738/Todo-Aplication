@@ -1,6 +1,11 @@
 package com.Lexicon.model;
 
-public class TodoItems {
+import com.Lexicon.Data.TodoItemsDao;
+import com.sun.tools.javac.comp.Todo;
+
+import java.util.function.IntFunction;
+
+public abstract class TodoItems implements TodoItemsDao {
     private int todoId;
     private int assigneeId;
     private String title;
@@ -9,6 +14,7 @@ public class TodoItems {
     private boolean done;
 
     public TodoItems(int todoId, int assigneeId, String title, String description, String deadline, boolean done) {
+        this();
         this.todoId = todoId;
         this.assigneeId = assigneeId;
         this.title = title;
@@ -18,10 +24,19 @@ public class TodoItems {
     }
 
     public TodoItems(int todoId, String title, String description, boolean done) {
+        this();
         this.todoId = todoId;
         this.title = title;
         this.description = description;
         this.done = done;
+    }
+
+    public TodoItems() {
+        super();
+
+    }
+
+    public static TodoItems create(TodoItems todo) {
     }
 
     public int getTodoId() {
@@ -84,5 +99,26 @@ public class TodoItems {
                 '}';
     }
     public void getTitle(String title) {
+    }
+
+    public int getId() {
+    }
+
+    public void setId(int id) {
+    }
+
+    public String size() {
+        return null;
+    }
+
+    @Override
+    public <T> T[] toArray(IntFunction<T[]> generator) {
+        return super.toArray(generator);
+    }
+
+    public boolean done() {
+    }
+
+    public void add(TodoItems todo) {
     }
 }

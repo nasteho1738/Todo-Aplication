@@ -41,14 +41,6 @@ public class PersonDaoImpl implements PersonDao {
         return person;
     }
 
-    /*
-    try() {
-
-        }catch (SQLException e) {
-            e.printStackTrace();
-
-        }
-     */
 
     @Override
     public Collection<Person> findAll() {

@@ -1,20 +1,20 @@
 package com.Lexicon.Data;
 
 import com.Lexicon.model.Person;
-import com.sun.tools.javac.comp.Todo;
+import com.Lexicon.model.TodoItems;
 
 import java.util.Collection;
 import java.util.Optional;
 
 public interface TodoItemsDao {
-    Todo create(Todo todo);
-    Collection<Todo> findAll();
-    Optional<Todo> findById(int id);
-    Collection<Todo> findByDoneStatus(boolean doneStatus);
-    Collection<Todo> findByAssignee(int assigneeId);
-    Collection<Todo> findByAssignee(Person assignee);
-    Collection<Todo> findByUnassignedTodos();
-    Todo update(Todo todo);
+    TodoItems create(TodoItems todo);
+    Collection<TodoItems> findAll();
+    Optional<TodoItems> findById(int id);
+    TodoItems findByDoneStatus(boolean doneStatus);
+    Collection<TodoItems> findByAssignee(int assigneeId);
+    TodoItems findByAssignee(Person assignee);
+    Collection<TodoItems> findByUnassignedTodos();
+    TodoItems update(TodoItems todo);
     boolean deleteById(int id);
 
 

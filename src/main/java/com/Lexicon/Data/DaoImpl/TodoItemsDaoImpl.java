@@ -2,16 +2,14 @@ package com.Lexicon.Data.DaoImpl;
 
 import com.Lexicon.Data.TodoItemsDao;
 import com.Lexicon.model.Person;
+import com.Lexicon.model.TodoItems;
 import com.sun.tools.javac.comp.Todo;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 
 public class TodoItemsDaoImpl implements TodoItemsDao {
 
@@ -23,16 +21,19 @@ public class TodoItemsDaoImpl implements TodoItemsDao {
     }
 
     @Override
-    public Todo create(Todo todo) {
+    public TodoItems create(TodoItems todo) {
         String query = "insert into todo_items (title, description, done) values (?, ?, ?)";
 
         try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, todo.getTitle());
             preparedStatement.setString(2, todo.getDescription());
-            preparedStatement.setBoolean(3, todo.isdone);
+            preparedStatement.setBoolean(3, todo.done());
             preparedStatement.executeUpdate();
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-            if(generatedKeys.next()) todo.retainAll(Collections.singleton(generatedKeys.getInt(1)));
+            Collections.singleton(generatedKeys.getInt(1));
+            if(generatedKeys.next()) {
+                todo.setId(generatedKeys.getInt(1));
+            };
 
         }catch (SQLException e) {
             e.printStackTrace();
@@ -43,39 +44,40 @@ public class TodoItemsDaoImpl implements TodoItemsDao {
     }
 
     @Override
-    public Collection<Todo> findAll() {
+    public Collection<TodoItems> findAll() {
         String query = "SELECT * FROM todo_items";
-        Collection<Todo> todos = new ArrayList<>();
+        Collection<TodoItems> todo = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Todo todo = new Todo();
+                TodoItems todo = new TodoItems();
                 todo.setId(resultSet.getInt("id"));
                 todo.setTitle(resultSet.getString("title"));
                 todo.setDescription(resultSet.getString("description"));
                 todo.setDone(resultSet.getBoolean("done"));
-                todos.add(todo);
+                todo.add(todo);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.out.println("Found " + todos);
-        return todos;
+        System.out.println("Found " + todo);
+        return todo;
     }
 
     @Override
-    public Optional<Todo> findById(int id) {
+    public Optional<TodoItems> findById(int id) {
         String query = "SELECT * FROM todo_items WHERE id = ?";
-        Todo todo = null;
+        TodoItems todo = null;
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, id);
-            ResultSet resultSet = PreparedStatement.executeQuery();
-            if (resultSet.next()) {
-                todo = new Todo();
-                todo.setId(resultSet.getInt("id"));
-                todo.setTitle(resultSet.getString("title"));
-                todo.setDescription(resultSet.getString("description"));
-                todo.setDone(resultSet.getBoolean("done"));
+            try (ResultSet resultSet = PreparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    //todo = new TodoItems();
+                    todo.setId(resultSet.getInt("id"));
+                    todo.setTitle(resultSet.getString("title"));
+                    todo.setDescription(resultSet.getString("description"));
+                    todo.setDone(resultSet.getBoolean("done"));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -85,10 +87,10 @@ public class TodoItemsDaoImpl implements TodoItemsDao {
     }
 
     @Override
-    public Collection<Todo> findByDoneStatus(boolean doneStatus) {
+    public TodoItems findByDoneStatus(boolean doneStatus) {
         String query = "SELECT * FROM todo_items WHERE done = ?";
-        Collection<Todo> todos = new ArrayList<>();
-        Todo todo = new Todo();
+        Collection<TodoItemsDao> todo = new ArrayList<>();
+        TodoItems todo = new TodoItems();
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setBoolean(1, doneStatus);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -97,20 +99,20 @@ public class TodoItemsDaoImpl implements TodoItemsDao {
                 todo.setTitle(resultSet.getString("title"));
                 todo.setDescription(resultSet.getString("description"));
                 todo.setDone(resultSet.getBoolean("done"));
-                todos.add(todo);
+                todo.add(todo);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.out.println("Found " + todos.size() + "Status " + doneStatus);
-        return todos;
+        System.out.println("Found " + todo.size() + "Status " + doneStatus);
+        return todo;
     }
 
     @Override
-    public Collection<Todo> findByAssignee(int assigneeId) {
+    public Collection<TodoItems> findByAssignee(int assigneeId) {
         String query = "SELECT ti.* FROM todo_items ti JOIN person p ON ti.assignee_id = p.id WHERE p.id = ?";
-        Collection<Todo>todos = new ArrayList<>();
-        Todo todo = new Todo();
+        Collection<TodoItemsDaoImpl>todo = new ArrayList<>();
+        TodoItems todo = new TodoItems();
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, assigneeId);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -119,20 +121,20 @@ public class TodoItemsDaoImpl implements TodoItemsDao {
                 todo.setTitle(resultSet.getString("title"));
                 todo.setDescription(resultSet.getString("description"));
                 todo.setDone(resultSet.getBoolean("done"));
-                todos.add(todo);
+                todo.add(todo);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.out.println("Found " + todos.size() + "Status " + assigneeId);
-        return todos;
+        System.out.println("Found " + todo.size() + "Status " + assigneeId);
+        return (Collection<TodoItems>) todo;
     }
 
     @Override
-    public Collection<Todo> findByAssignee(Person assignee) {
+    public TodoItems findByAssignee(Person assignee) {
         String query = "SELECT ti.* FROM todo_items ti JOIN person p ON ti.assignee_id = p.id WHERE p.first_name = ? AND p.last_name = ?";
-        Collection<Todo> todos = new ArrayList<>();
-        Todo todo = new Todo();
+        Collection<TodoItems> todos = new ArrayList<>();
+        TodoItems todo = new TodoItems();
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, assignee.getFirstName());
             preparedStatement.setString(2, assignee.getLastName());
@@ -148,18 +150,18 @@ public class TodoItemsDaoImpl implements TodoItemsDao {
             e.printStackTrace();
         }
         System.out.println("Found " + todos.size() + "Status " + assignee);
-        return todos;
+        return todo;
     }
 
     @Override
-    public Collection<Todo> findByUnassignedTodos() {
+    public Collection<TodoItems> findByUnassignedTodos() {
         String query = "SELECT * FROM todo_items WHERE assignee_id IS NULL";
-        Collection<Todo> todos = new ArrayList<>();
-        Todo todo = new Todo();
+        Collection<TodoItems> todos = new ArrayList<>();
+        TodoItems todo = new TodoItems();
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                todo.setId(resultSet.getInt("id"));
+                todo.setTodoId(1);Id(resultSet.getInt("id"));
                 todo.setTitle(resultSet.getString("title"));
                 todo.setDescription(resultSet.getString("description"));
                 todo.setDone(resultSet.getBoolean("done"));
@@ -169,11 +171,14 @@ public class TodoItemsDaoImpl implements TodoItemsDao {
             e.printStackTrace();
         }
         System.out.println("found " + todos.size());
-        return todos;
+        return (Collection<TodoItems>) todo;
+    }
+
+    private void Id(int id) {
     }
 
     @Override
-    public Todo update(Todo todo) {
+    public TodoItems update(TodoItems todo) {
         String query = "UPDATE todo_items SET title = ?, description = ?, done = ? WHERE id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, todo.getTitle());

@@ -4,7 +4,7 @@ import com.Lexicon.Data.DaoImpl.PersonDaoImpl;
 import com.Lexicon.Data.DaoImpl.TodoItemsDaoImpl;
 import com.Lexicon.Data.PersonDao;
 import com.Lexicon.Data.TodoItemsDao;
-import com.sun.tools.javac.comp.Todo;
+import com.Lexicon.model.TodoItems;
 
 import java.sql.Connection;
 
@@ -12,14 +12,14 @@ public class App {
 
     public static void main(String[] args )
     {
-        Connection Connection;
+        Connection Connection = null;
         TodoItemsDao todoItemsDao = new TodoItemsDaoImpl(Connection);
             PersonDao personDao = new PersonDaoImpl(Connection);
-            Todo todo = new Todo();
+            TodoItems todo = new TodoItems();
             todo.setTitle("Buy groceries");
             todo.setDescription("Milk, eggs, bread");
             todo.setDone(false);
-            Todo createdTodo = todoItemsDao.create(todo);
+            TodoItems createdTodo = TodoItems.create(todo);
             System.out.println("Created Todo: " + createdTodo);
 
         }
